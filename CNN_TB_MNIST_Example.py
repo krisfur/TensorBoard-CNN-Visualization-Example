@@ -48,7 +48,7 @@ training_epochs = 200
 image_shape = [-1, image_x, image_y, 1]
 batch_size = 50
 learning_rate = 1e-4
-#n_features = image_x*image_y
+output_directory = 'mnist_TB_logs'
 #----------------------------------------------------------------------
 #----------------------------------------------------------------------
 # ###BUILD THE CNN###
@@ -241,7 +241,6 @@ sess.run(tf.global_variables_initializer())
 
 # Merge all the summaries and write them out to "mnist_logs"
 merged = tf.summary.merge_all()
-output_directory = 'mnist_TB_logs'
 if not os.path.exists(output_directory):
     os.makedirs(output_directory)
     os.makedirs(output_directory + '/train')
@@ -263,7 +262,7 @@ for i in range(1,training_epochs+1):
                                     y_: batch_lbl,
                                     keep_prob: 1.0})
 
-    # output the data into TensorBoard summaries
+    # output the data into TensorBoard summaries every 10 steps
     if (i)%display_step == 0:
         train_summary, train_accuracy = sess.run([merged, accuracy], feed_dict={x:batch_img,
                                                                                 y_: batch_lbl,
@@ -276,7 +275,7 @@ for i in range(1,training_epochs+1):
                                                                               keep_prob: 0.9})
         test_writer.add_summary(test_summary, i)
         print("test accuracy %g"%test_accuracy)
-    # output metadata before every full 100 epochs  
+    # output metadata every 100 epochs  
     if i % 100 == 0 or i+1 == training_epochs:
         print('Adding run metadata for', i)
         run_options = tf.RunOptions(trace_level=tf.RunOptions.FULL_TRACE)
@@ -299,7 +298,9 @@ for i in range(1,training_epochs+1):
 train_writer.close()
 test_writer.close()
 
-# evaluate accuracy
+#----------------------------------------------------------------------
+# Evaluate model
+#----------------------------------------------------------------------
 print('\nEvaluating final accuracy of the model.')
 train_accuracy = sess.run(accuracy, feed_dict={x: mnist.test.images,
                                               y_: mnist.test.labels,
@@ -312,12 +313,18 @@ print('Evaluating final accuracy of the model...')
 val_accuracy  = sess.run(accuracy, feed_dict={x: mnist.validation.images,
                                              y_: mnist.validation.labels,
                                              keep_prob: 1.0})
-
-# print results
+#----------------------------------------------------------------------
+#----------------------------------------------------------------------
+# Output results
+#----------------------------------------------------------------------
+#----------------------------------------------------------------------
 print ("\nTraining phase finished")
 print ("\tAccuracy for the train set examples      = " , train_accuracy)
 print ("\tAccuracy for the test set examples       = " , test_accuracy)
 print ("\tAccuracy for the validation set examples = " , val_accuracy)
 
-#print a statement to indicate where to find logs
+#print a statement to indicate where to find TensorBoard logs
 print('\nRun "tensorboard --logdir=' + output_directory + '" to see results on localhost:6006')
+#----------------------------------------------------------------------
+#----------------------------------------------------------------------
+#----------------------------------------------------------------------
