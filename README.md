@@ -1,7 +1,7 @@
 # TensorBoard CNN Visualization Example
 
-This example CNN using MNIST data was written to showcase usage of the TensorBoard visualisation tools. 
-No functions are defined so code can be easily read from top to bottom step by step.
+This example Convolutional Neural Network using MNIST data was written to showcase usage of the TensorBoard visualisation tools. 
+No functions are defined so code can be easily read from top to bottom, step by step.
 Made for learning purposes.
 
 ## Getting Started
@@ -11,7 +11,7 @@ Made for learning purposes.
 Python 3.x
 ```
 ```
-Installed TensorFlow 1.0 or higher 
+TensorFlow 1.2.1 or higher 
 ```
 Doesn't require GPU support, can be done on CPU only. 
 If using GPU support you will need the CUPTI library for TensorBoard to work.
