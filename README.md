@@ -18,7 +18,11 @@ If using GPU support you will need the CUPTI library for TensorBoard to work.
 
 ### Running the program
 
-Simply run CNN_TB_Example.py to train the CNN and get logs saved to mnist_TB_logs folder.
+Simply execute:
+```
+python CNN_TB_Example.py
+``` 
+To train the CNN and get logs saved to mnist_TB_logs folder.
 To view logs simply run:
 ```
 tensorboard --logdir=mnist_TB_logs
