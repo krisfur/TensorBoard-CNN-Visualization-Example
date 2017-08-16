@@ -23,11 +23,12 @@ To view logs simply run:
 ```
 tensorboard --logdir=mnist_TB_logs
 ```
-In the command line/terminal while in the folder with the program.
+In the command line/terminal while in the folder with the program. 
+You can naturally replace "mnist_TB_logs" with path to any folder that contains TensorBoard logs.
 
 ## Built With
 
-* [TensorFlow](https://www.tensorflow.org/) - Framework used
+* [TensorFlow](https://www.tensorflow.org/) - Framework version 1.2.1 used
 
 ## Contributing
 
@@ -43,4 +44,4 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 
 ## Acknowledgments
 
-* Google's MNIST tutorials which were used as base for the CNN in this file.
+* Google's [MNIST tutorials](https://www.tensorflow.org/get_started/mnist/pros) which were used as base for the CNN in this file.
