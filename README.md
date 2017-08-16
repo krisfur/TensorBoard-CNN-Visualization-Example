@@ -45,3 +45,4 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 ## Acknowledgments
 
 * Google's [MNIST tutorials](https://www.tensorflow.org/get_started/mnist/pros) which were used as base for the CNN in this file.
+* Ideas expressed in [this GitHub discussion](https://github.com/tensorflow/tensorflow/issues/842)
