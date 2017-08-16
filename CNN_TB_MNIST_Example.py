@@ -27,6 +27,7 @@
 #----------------------------------------------------------------------
 import tensorflow as tf
 import os
+import shutil
 from tensorflow.contrib.learn.python.learn.datasets.mnist import read_data_sets
 #----------------------------------------------------------------------
 #----------------------------------------------------------------------
@@ -54,6 +55,7 @@ output_directory = 'mnist_TB_logs'
 # ###BUILD THE CNN###
 #----------------------------------------------------------------------
 #----------------------------------------------------------------------
+print('\nBuilding the CNN.')
 # set placeholders
 with tf.name_scope('input'):
     x = tf.placeholder(tf.float32, [None, 784], name='x-input')
@@ -229,6 +231,7 @@ with tf.name_scope('accuracy'):
     with tf.name_scope('accuracy'):
         accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 tf.summary.scalar('accuracy', accuracy)
+print('CNN successfully built.')
 #----------------------------------------------------------------------
 #----------------------------------------------------------------------
 # ###START SESSSION AND COMMENCE TRAINING###
@@ -242,9 +245,18 @@ sess.run(tf.global_variables_initializer())
 # Merge all the summaries and write them out to "mnist_logs"
 merged = tf.summary.merge_all()
 if not os.path.exists(output_directory):
+    print('\nOutput directory does not exist - creating...')
     os.makedirs(output_directory)
     os.makedirs(output_directory + '/train')
     os.makedirs(output_directory + '/test')
+    print('Output directory created.')
+else:
+    print('\nOutput directory already exists - overwriting...')
+    shutil.rmtree(output_directory, ignore_errors=True)
+    os.makedirs(output_directory)
+    os.makedirs(output_directory + '/train')
+    os.makedirs(output_directory + '/test')
+    print('Output directory overwitten.')
 # prepare log writers
 train_writer = tf.summary.FileWriter(output_directory + '/train', sess.graph)
 test_writer = tf.summary.FileWriter(output_directory + '/test')
@@ -253,6 +265,7 @@ saver = tf.train.Saver()
 #----------------------------------------------------------------------
 # Train
 #----------------------------------------------------------------------
+print('\nTraining phase initiated.\n')
 for i in range(1,training_epochs+1):
     batch_img, batch_lbl = mnist.train.next_batch(batch_size)
     testbatch = mnist.test.next_batch(batch_size)
@@ -276,8 +289,8 @@ for i in range(1,training_epochs+1):
         test_writer.add_summary(test_summary, i)
         print("test accuracy %g"%test_accuracy)
     # output metadata every 100 epochs  
-    if i % 100 == 0 or i+1 == training_epochs:
-        print('Adding run metadata for', i)
+    if i % 100 == 0 or i == training_epochs:
+        print('\nAdding run metadata for epoch ' + str(i) + '\n')
         run_options = tf.RunOptions(trace_level=tf.RunOptions.FULL_TRACE)
         run_metadata = tf.RunMetadata()
         summary, _ = sess.run([merged, train_step],
@@ -287,8 +300,8 @@ for i in range(1,training_epochs+1):
         train_writer.add_run_metadata(run_metadata, 'step%03d' % i)
         train_writer.add_summary(summary, i)
     # save checkpoint at the end
-    if i+1 == training_epochs:
-        print('\nSaving model at ' + str(i) + 'epochs.')
+    if i == training_epochs:
+        print('\nSaving model at ' + str(i) + ' epochs.')
         saver.save(sess, output_directory + "/model_at_" + str(i) + "_epochs.ckpt",
                    global_step=i)
     
@@ -297,19 +310,18 @@ for i in range(1,training_epochs+1):
 # close writers
 train_writer.close()
 test_writer.close()
-
 #----------------------------------------------------------------------
 # Evaluate model
 #----------------------------------------------------------------------
-print('\nEvaluating final accuracy of the model.')
+print('\nEvaluating final accuracy of the model (1/3)')
 train_accuracy = sess.run(accuracy, feed_dict={x: mnist.test.images,
                                               y_: mnist.test.labels,
                                               keep_prob: 1.0})
-print('Evaluating final accuracy of the model..')
+print('Evaluating final accuracy of the model (2/3)')
 test_accuracy = sess.run(accuracy, feed_dict={x: mnist.train.images,
                                              y_: mnist.train.labels,
                                              keep_prob: 1.0})
-print('Evaluating final accuracy of the model...')
+print('Evaluating final accuracy of the model (3/3)')
 val_accuracy  = sess.run(accuracy, feed_dict={x: mnist.validation.images,
                                              y_: mnist.validation.labels,
                                              keep_prob: 1.0})
