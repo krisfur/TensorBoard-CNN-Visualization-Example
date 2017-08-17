@@ -260,6 +260,7 @@ else:
 # prepare log writers
 train_writer = tf.summary.FileWriter(output_directory + '/train', sess.graph)
 test_writer = tf.summary.FileWriter(output_directory + '/test')
+roc_writer = tf.summary.FileWriter(output_directory)
 # prepare checkpoint writer
 saver = tf.train.Saver()
 #----------------------------------------------------------------------
@@ -325,6 +326,49 @@ print('Evaluating final accuracy of the model (3/3)')
 val_accuracy  = sess.run(accuracy, feed_dict={x: mnist.validation.images,
                                              y_: mnist.validation.labels,
                                              keep_prob: 1.0})
+#----------------------------------------------------------------------
+# !!!UNOPTIMISED!!! ROC Curve calculation
+#----------------------------------------------------------------------
+'''
+print('Evaluating ROC curve')
+#predictions = []
+labels = mnist.test.labels
+threshold_num = 100
+thresholds = []
+fpr_list = [] #false positive rate
+tpr_list = [] #true positive rate
+summt = tf.Summary()
+pred = tf.nn.softmax(y_conv)
+predictions = sess.run(pred, feed_dict={x: mnist.test.images,
+                                        y_: mnist.test.labels,
+                                        keep_prob: 1.0})
+for i in range(len(labels)):
+    threshold_step = 1. / threshold_num
+    for t in range(threshold_num+1):
+        th = 1 - threshold_num * t
+        fp = 0
+        tp = 0
+        tn = 0
+        for j in range(len(labels)):
+            for k in range(10):
+                if not labels[j][k]:
+                    if predictions[j][k] >= t:
+                        fp += 1
+                    else:
+                        tn += 1
+                elif predictions[j][k].any() >= t:
+                    tp += 1
+        fpr = fp / float(fp + tn)
+        tpr = tp / float(len(labels))
+        fpr_list.append(fpr)
+        tpr_list.append(tpr)
+        thresholds.append(th)
+
+#auc = tf.metrics.auc(labels, redictions, thresholds)
+summt.value.add(tag = 'ROC', simple_value = tpr)
+roc_writer.add_summary(summt, fpr * 100)
+roc_writer.flush()
+'''
 #----------------------------------------------------------------------
 #----------------------------------------------------------------------
 # Output results
