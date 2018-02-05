@@ -30,6 +30,11 @@ tensorboard --logdir=mnist_TB_logs
 In the command line/terminal while in the folder with the program. 
 You can naturally replace "mnist_TB_logs" with path to any folder that contains TensorBoard logs.
 
+Note: In Tensorflow 1.5 it is a known issue of TensorBoard not launching properly. Instead use command:
+```
+python -m tensorboard.main --logdir=mnist_TB_logs
+```
+
 ## Built With
 
 * [TensorFlow](https://www.tensorflow.org/) - Framework version 1.2.1 used
